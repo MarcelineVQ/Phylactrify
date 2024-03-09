@@ -1,0 +1,10 @@
+## Interface: 11200
+## Title: Phylactrify
+## Notes: Automatic re-equip of Phylactry on death
+## X-Category: Interface Enhancements
+## X-Date: 2024-02-18
+## X-Website:
+## Version: 1.3
+## SavedVariablesPerCharacter: PhylactrifySettings
+
+Phylactrify.lua
