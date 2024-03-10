@@ -1,0 +1,10 @@
+## Interface: 11200
+## Title: Regear
+## Notes: Automatic re-equip of Phylactry on death
+## X-Category: Interface Enhancements
+## X-Date: 2024-03-09
+## X-Website:
+## Version: 1.0
+## SavedVariablesPerCharacter: RegearSettings
+
+Regear.lua
