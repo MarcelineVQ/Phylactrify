@@ -172,11 +172,24 @@ local function handleCommands(msg,editbox)
     PhylactrifySettings.announce = not PhylactrifySettings.announce
     amprint("Addon enabled: "..showOnOff(PhylactrifySettings.enabled))
   elseif args[1] == "item" and args[2] then
+    -- This needs to immediately scan for the item otherwise player might have typod
     table.remove(args,1)
     local item = table.concat(args, " ")
     debug_print(item)
-    PhylactrifySettings.item_link = item
-    amprint("Tracking enabled for: "..PhylactrifySettings.item_link)
+
+    local inv_slot = FindInvItemSlot(item)
+    local b,s = FindBagItem(item)
+    if inv_slot then 
+      link = GetInventoryItemLink("player",inv_slot)
+      PhylactrifySettings.item_link = link
+      amprint("Tracking enabled for: "..PhylactrifySettings.item_link)
+    elseif s and b then
+      link = GetContainerItemLink(b,s)
+      PhylactrifySettings.item_link = link
+      amprint("Tracking enabled for: "..PhylactrifySettings.item_link)
+    else
+      amprint("Item not found on character or in bags, did you mis-spell?")
+    end
   else
     amprint('Phylactrify: Automatically re-equip '..PhylactrifySettings.item_link..' on death.')
     amprint('- Addon [enabled]: ' .. showOnOff(PhylactrifySettings.enabled))
