@@ -6,3 +6,5 @@ An addon to automatically re-equip an item on death.
 The buff this trinket provides does not re-apply when you ressurect so this addon fixes that.  
 
 `/regear` in game to see some options  
+
+* This addon is made by and for `Weird Vibes` of Turtle WoW.  
