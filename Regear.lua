@@ -121,44 +121,44 @@ end
 
 local Regear = CreateFrame("FRAME")
 
-local loaded = false
-
 local function OnEvent()
-  if loaded then
-    if RegearSettings.do_toggle
-        and checkNaxx()
-        and not UnitIsDeadOrGhost("player")
-        and event == "BAG_UPDATE" then
-      debug_print("player inv changed")
-      local b,s,_ = FindItem(RegearSettings.item_link)
-      if b and s then
-        PickupContainerItem(b,s)
-        EquipCursorItem(RegearSettings.item_slot)
-      end
-      RegearSettings.do_toggle = false
-      if RegearSettings.announce then
-        amprint(RegearSettings.item_link .. " cycled off and on.")
-      end
-    elseif event == "PLAYER_DEAD" then
-      debug_print("player dead")
-      local slot,in_bag,_ = FindItem(RegearSettings.item_link)
-      debug_print(RegearSettings.item_slot)
-      if slot and not in_bag then
-        RegearSettings.item_slot = slot
-        local link = GetInventoryItemLink("player",RegearSettings.item_slot)
-        RegearSettings.item_link = link
-        RegearSettings.do_toggle = true
-        debug_print(RegearSettings.item_slot)
-      end
-    elseif RegearSettings.do_toggle
-        and checkNaxx()
-        and (event == "PLAYER_UNGHOST" or event == "PLAYER_ALIVE")
-        and not UnitIsDeadOrGhost("player") then
-      debug_print("player not dead")
-      PickupInventoryItem(RegearSettings.item_slot)
-      PutItemInBackpack()
+  if RegearSettings.do_toggle
+      and checkNaxx()
+      and not UnitIsDeadOrGhost("player")
+      and event == "BAG_UPDATE" then
+    debug_print("player inv changed")
+    local b,s,_ = FindItem(RegearSettings.item_link)
+    if b and s then
+      PickupContainerItem(b,s)
+      EquipCursorItem(RegearSettings.item_slot)
     end
-  elseif event == "ADDON_LOADED" then
+    RegearSettings.do_toggle = false
+    if RegearSettings.announce then
+      amprint(RegearSettings.item_link .. " cycled off and on.")
+    end
+  elseif event == "PLAYER_DEAD" then
+    debug_print("player dead")
+    local slot,in_bag,_ = FindItem(RegearSettings.item_link)
+    debug_print(RegearSettings.item_slot)
+    if slot and not in_bag then
+      RegearSettings.item_slot = slot
+      local link = GetInventoryItemLink("player",RegearSettings.item_slot)
+      RegearSettings.item_link = link
+      RegearSettings.do_toggle = true
+      debug_print(RegearSettings.item_slot)
+    end
+  elseif RegearSettings.do_toggle
+      and checkNaxx()
+      and (event == "PLAYER_UNGHOST" or event == "PLAYER_ALIVE")
+      and not UnitIsDeadOrGhost("player") then
+    debug_print("player not dead")
+    PickupInventoryItem(RegearSettings.item_slot)
+    PutItemInBackpack()
+  end
+end
+
+local function Init()
+  if event == "ADDON_LOADED" and arg1 == "Regear" then
     Regear:UnregisterEvent("ADDON_LOADED")
     if not RegearSettings
       then RegearSettings = defaults -- initialize default settings
@@ -172,8 +172,8 @@ local function OnEvent()
         -- is the above just: s[k] = ((AutoManaSettings[k] == nil) and defaults[k]) or AutoManaSettings[k]
         RegearSettings = s
       end
-    loaded = true
   end
+  Regear:SetScript("OnEvent", OnEvent)
 end
 
 Regear:RegisterEvent("BAG_UPDATE")
@@ -182,7 +182,7 @@ Regear:RegisterEvent("PLAYER_DEAD")
 Regear:RegisterEvent("PLAYER_UNGHOST") -- literally unghosting, so becoming alive again by any means after being a ghost
 Regear:RegisterEvent("PLAYER_ALIVE") -- when you release to ghost, or are rezzed. in othe words, when you were dead but have control again
 Regear:RegisterEvent("ADDON_LOADED")
-Regear:SetScript("OnEvent", OnEvent)
+Regear:SetScript("OnEvent", Init)
 
 local function showOnOff(setting)
   return setting and "True" or "False"
@@ -212,7 +212,7 @@ local function handleCommands(msg,editbox)
       if in_bag then
         link = GetContainerItemLink(slot,in_bag)
       else
-        link = GetInventoryItemLink("player",inv_slot)
+        link = GetInventoryItemLink("player",slot)
       end
       RegearSettings.item_link = link
       amprint("Tracking enabled for: "..RegearSettings.item_link)
